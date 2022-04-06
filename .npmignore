@@ -1,0 +1,8 @@
+# Folders
+/node_modules
+/src
+/examples
+/.vscode
+
+# Files
+.gitignore

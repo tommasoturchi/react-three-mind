@@ -1,0 +1,45 @@
+{
+  "name": "react-three-mind",
+  "version": "0.0.1",
+  "description": "MindAR components for @react-three/fiber",
+  "main": "dist/index.js",
+  "author": "Tommaso Turchi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tommasoturchi/react-three-mind"
+  },
+  "keywords": [
+    "web AR",
+    "react-three-fiber",
+    "react",
+    "fiber",
+    "three",
+    "threejs",
+    "image tracking",
+    "face tracking"
+  ],
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "babel-loader": "^8.2.4",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "terser-webpack-plugin": "^5.3.1",
+    "webpack": "^5.71.0",
+    "webpack-cli": "^4.9.2",
+    "worker-loader": "^3.0.8"
+  },
+  "dependencies": {
+    "@react-three/drei": "^8.16.7",
+    "@react-three/fiber": "^7.0.26",
+    "jotai": "^1.6.1",
+    "mind-ar": "^1.1.4",
+    "react-webcam": "^7.0.0",
+    "three": "^0.137.5"
+  }
+}

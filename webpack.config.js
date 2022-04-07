@@ -17,10 +17,6 @@ module.exports = {
         use: "babel-loader",
       },
       {
-        test: /\.png$/,
-        use: "file-loader",
-      },
-      {
         test: /\.worker\.js$/,
         loader: "worker-loader",
         options: {
@@ -54,6 +50,11 @@ module.exports = {
     minimize: true,
     minimizer: [
       new TerserPlugin({
+        terserOptions: {
+          format: {
+            comments: false,
+          },
+        },
         extractComments: false,
       }),
     ],

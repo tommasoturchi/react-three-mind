@@ -12,7 +12,7 @@ function Plane(props) {
 function App() {
   return (
     <ARView
-      targets="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/examples/image-tracking/assets/card-example/card.mind"
+      imageTargets="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/examples/image-tracking/assets/card-example/card.mind"
       filterMinCF={1}
       filterBeta={10000}
       missTolerance={0}
@@ -20,7 +20,7 @@ function App() {
     >
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <ARAnchor>
+      <ARAnchor target={0}>
         <Plane />
       </ARAnchor>
     </ARView>

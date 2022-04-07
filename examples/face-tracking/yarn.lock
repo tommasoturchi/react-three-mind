@@ -7296,10 +7296,10 @@ react-three-fiber@0.0.0-deprecated:
   resolved "https://registry.yarnpkg.com/react-three-fiber/-/react-three-fiber-0.0.0-deprecated.tgz#c737242487d824cf9520307308b7e4c4071a278f"
   integrity sha512-EblIqTAsIpkYeM8bZtC4lcpTE0A2zCEGipFB52RgcQq/q+0oryrk7Sxt+sqhIjUu6xMNEVywV8dr74lz5yWO6A==
 
-react-three-mind@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/react-three-mind/-/react-three-mind-0.0.1.tgz#75fa34d60a3b4ba135b55defb17aa21ca2783b31"
-  integrity sha512-hlqzt5mgC6jqeoP5ADlRjh8zj1eOKZ2jGF/D5QLmCLnAT+4kI96Z0YK6xTwX4Cs3kRWdDXGrAFUV/3S9EPzqRg==
+react-three-mind@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/react-three-mind/-/react-three-mind-0.1.3.tgz#e14e3024be647951d09c02930034f388e2e4f8ac"
+  integrity sha512-s/eoqNgp6k/guLJUzoFJbLGP3h7sAcH4imwHxrKS8lmvo0ik3EhsQwVfaLSlGQkLzuJlQQZNj0N+Tt4Xs/CpNw==
   dependencies:
     "@react-three/drei" "^8.16.7"
     "@react-three/fiber" "^7.0.26"

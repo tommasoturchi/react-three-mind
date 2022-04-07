@@ -10,7 +10,9 @@ function App() {
     >
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <ARFaceMesh />
+      <ARFaceMesh>
+        <meshBasicMaterial color="hotpink" wireframe />
+      </ARFaceMesh>
     </ARView>
   );
 }

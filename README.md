@@ -64,8 +64,8 @@ An Object3D anchor linking it to a tracked target. Can be used both for image an
 ```jsx
 <ARAnchor
   target={0} // Target (image or face) to be anchored to
-  onAnchorFound={() => console.log(🥳)} // Callback invoked when anchor has been found
-  onAnchorLost={() => console.log(😢)} // Callback invoked when previously found anchor has been lost
+  onAnchorFound={() => console.log(🥳)} // Callback invoked when anchor was found
+  onAnchorLost={() => console.log(😢)} // Callback invoked when previously found anchor was lost
   {...groupProps} // All @react-three/fiber Group props are valid
 >
   <mesh />
@@ -78,8 +78,8 @@ A Mesh Object representing a tracked face (see the original [MindAR example](htt
 
 ```jsx
 <ARFaceMesh
-  onFaceFound={() => console.log(🥳)} // Callback invoked when face has been found
-  onFaceLost={() => console.log(😢)} // Callback invoked when previously found face has been lost
+  onFaceFound={() => console.log(🥳)} // Callback invoked when face was found
+  onFaceLost={() => console.log(😢)} // Callback invoked when previously found face was lost
   {...meshProps} // All @react-three/fiber Mesh props are valid
 >
   <meshBasicMaterial color="hotpink" wireframe />

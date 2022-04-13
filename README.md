@@ -49,7 +49,7 @@ const switchCamera = ref.current.switchCamera(); // Switches between environment
   maxTrack={1} // Maximum number of targets tracked simultaneously
   filterMinCF={0.1} // Cutoff Frequency, decrease to reduce jittering
   filterBeta={1000} // Speed Coefficient, increase to reduce delay
-  warmupTolerance={5} // Number of continuous frames required for a target being detected to be marked as tracked
+  warmupTolerance={5} // Number of continuous frames required for a target being detected to be marked as found
   missTolerance={5} // Number of continuous frames required for a target not being detected to be marked as lost
   {...canvasProps} // All @react-three/fiber Canvas props are valid
 >

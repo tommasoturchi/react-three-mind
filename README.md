@@ -37,7 +37,13 @@ ReactDOM.render(
 AR Wrapper over [@react-three/fiber Canvas](https://docs.pmnd.rs/react-three-fiber/api/canvas) managing the live video background and the 3D scene alignment.
 
 ```jsx
+const ref = useRef();
+const startTracking = ref.current.startTracking(); // Starts tracking
+const stopTracking = ref.current.stopTracking(); // Stops tracking
+const switchCamera = ref.current.switchCamera(); // Switches between environment and user camera
+
 <ARView
+  ref={ref}
   autoplay // Automatically starts tracking once the camera stream is ready
   imageTargets={`url`} // URL of the generated image targets features
   maxTrack={1} // Maximum number of targets tracked simultaneously
@@ -58,8 +64,8 @@ An Object3D anchor linking it to a tracked target. Can be used both for image an
 ```jsx
 <ARAnchor
   target={0} // Target (image or face) to be anchored to
-  onAnchorFound={() => console.log("Found!")} // Callback invoked when anchor has been found
-  onAnchorLost={() => console.log("Lost...")} // Callback invoked when previously found anchor has been lost
+  onAnchorFound={() => console.log(🥳)} // Callback invoked when anchor has been found
+  onAnchorLost={() => console.log(😢)} // Callback invoked when previously found anchor has been lost
   {...groupProps} // All @react-three/fiber Group props are valid
 >
   <mesh />
@@ -72,8 +78,8 @@ A Mesh Object representing a tracked face (see the original [MindAR example](htt
 
 ```jsx
 <ARFaceMesh
-  onFaceFound={() => console.log("Found!")} // Callback invoked when face has been found
-  onFaceLost={() => console.log("Lost...")} // Callback invoked when previously found face has been lost
+  onFaceFound={() => console.log(🥳)} // Callback invoked when face has been found
+  onFaceLost={() => console.log(😢)} // Callback invoked when previously found face has been lost
   {...meshProps} // All @react-three/fiber Mesh props are valid
 >
   <meshBasicMaterial color="hotpink" wireframe />

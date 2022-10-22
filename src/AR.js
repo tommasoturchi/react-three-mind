@@ -387,13 +387,13 @@ const ARFaceMesh = ({ children, onFaceFound, onFaceLost, ...rest }) => {
           itemSize={1}
         />
         <bufferAttribute
-          attachObject={["attributes", "position"]}
+          attach="attributes-position"
           count={positions.length / 3}
           itemSize={3}
           array={positions}
         />
         <bufferAttribute
-          attachObject={["attributes", "uv"]}
+          attach="attributes-uv"
           count={uvs.length / 2}
           itemSize={2}
           array={uvs}

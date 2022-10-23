@@ -15,18 +15,19 @@ There's no easy and ready-to-use way of developing AR experiences whilst leverag
 Provide an [imageTargets]("https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/examples/image-tracking/assets/card-example/card.mind") url to toggle image tracking mode. See the [examples](./examples) and the original [MindAR Documentation](https://hiukim.github.io/mind-ar-js-doc/quick-start/compile) to find out how to compile your own image targets.
 
 ```jsx
-import ReactDOM from "react-dom";
 import React from "react";
+import { createRoot } from "react-dom/client";
 
 import { ARView, ARFaceMesh } from "react-three-mind";
 
-ReactDOM.render(
+const container = document.getElementById("root");
+const root = createRoot(container);
+root.render(
   <ARView>
     <ARFaceMesh>
       <meshBasicMaterial color="hotpink" wireframe />
     </ARFaceMesh>
-  </ARView>,
-  document.getElementById("root")
+  </ARView>
 );
 ```
 

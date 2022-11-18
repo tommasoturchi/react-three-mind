@@ -252,6 +252,22 @@ const ARProvider = forwardRef(
       }
     }, [autoplay, ready, startTracking]);
 
+    const fixStyle = () => {
+      let offset = 0
+      if(webcamRef.current?.video?.clientWidth>0){
+        offset = (width - webcamRef.current.video.clientWidth) / 2;
+      }
+      offset = parseInt(offset+'')
+      return(
+        {
+          width: "auto",
+          maxWidth: "none",
+          height: 'inherit',
+          marginLeft: offset+'px'
+        }
+      )
+    }
+
     return (
       <>
         <Html
@@ -267,8 +283,8 @@ const ARProvider = forwardRef(
             width={width}
             videoConstraints={{
               facingMode: isWebcamFacingUser ? "user" : "environment",
-              aspectRatio: ratio,
             }}
+            style={fixStyle()}
           />
         </Html>
         {children}

@@ -37,6 +37,8 @@ const ARProvider = forwardRef(
       filterBeta = null,
       warmupTolerance = null,
       missTolerance = null,
+      onReady = null,
+      onError = null,
     },
     ref
   ) => {
@@ -49,11 +51,6 @@ const ARProvider = forwardRef(
     const [faceMeshes] = useAtom(faceMeshesAtom);
 
     const { width, height } = useWindowSize();
-    const isLandscape = useMemo(() => height <= width, [height, width]);
-    const ratio = useMemo(
-      () => (isLandscape ? width / height : height / width),
-      [isLandscape, width, height]
-    );
 
     useEffect(() => {
       if (controllerRef.current) {
@@ -202,6 +199,8 @@ const ARProvider = forwardRef(
         controller.processVideo(webcamRef.current.video);
 
         controllerRef.current = controller;
+
+        onReady && onReady();
       }
     }, [
       ready,
@@ -253,20 +252,19 @@ const ARProvider = forwardRef(
     }, [autoplay, ready, startTracking]);
 
     const fixStyle = () => {
-      let offset = 0
-      if(webcamRef.current?.video?.clientWidth>0){
+      let offset = 0;
+      if (webcamRef.current?.video?.clientWidth > 0) {
         offset = (width - webcamRef.current.video.clientWidth) / 2;
       }
-      offset = parseInt(offset+'')
-      return(
-        {
-          width: "auto",
-          maxWidth: "none",
-          height: 'inherit',
-          marginLeft: offset+'px'
-        }
-      )
-    }
+      offset = parseInt(offset + "");
+
+      return {
+        width: "auto",
+        maxWidth: "none",
+        height: "inherit",
+        marginLeft: offset + "px",
+      };
+    };
 
     return (
       <>
@@ -279,6 +277,9 @@ const ARProvider = forwardRef(
           <Webcam
             ref={webcamRef}
             onUserMedia={handleStream}
+            onUserMediaError={(e) => {
+              onError && onError(e);
+            }}
             height={height}
             width={width}
             videoConstraints={{
@@ -304,6 +305,8 @@ const ARView = forwardRef(
       filterBeta,
       warmupTolerance,
       missTolerance,
+      onReady,
+      onError,
       ...rest
     },
     ref
@@ -333,6 +336,8 @@ const ARView = forwardRef(
               filterBeta,
               warmupTolerance,
               missTolerance,
+              onReady,
+              onError,
             }}
             ref={ARRef}
           >

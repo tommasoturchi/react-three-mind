@@ -103,6 +103,10 @@ A Mesh Object representing a tracked face (see the original [MindAR example](htt
 </ARFaceMesh>
 ```
 
+## 🙏 Credits
+
+[MindAR](https://github.com/hiukim/mind-ar-js) is developed by the amazing [HiuKim Yuen](https://github.com/hiukim/). The showcase videos in this README come from its documentation.
+
 ## 📮 TODO
 
 - [x] Add Showcase Video

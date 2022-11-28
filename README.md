@@ -6,6 +6,22 @@ React Components adding Augmented Reality capabilities to [@react-three/fiber](h
 npm i react-three-mind
 ```
 
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <img src="https://hiukim.github.io/mind-ar-js-doc/assets/images/basic-demo-fde07aa7567bf213e61b37dbaa192fec.gif" width="300px">
+      </td>
+      <td>
+        <img src="https://hiukim.github.io/mind-ar-js-doc/assets/images/face-tryon-demo-369c4ba701f1df2099ecf05c27f0c944.gif" width="300px"/>
+      </td>
+      <td>
+        <img src="https://hiukim.github.io/mind-ar-js-doc/assets/images/face-mesh-demo-8f5bd8d1bcbffbdb76896b58171ecc8a.gif" width="300px"/>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 ## 📍 Motivation
 
 There's no easy and ready-to-use way of developing AR experiences whilst leveraging on the amazing ecosystem around [@react-three/fiber](https://github.com/pmndrs/react-three-fiber). [MindAR](https://github.com/hiukim/mind-ar-js) is a performance-oriented and easy to use library managing image and face tracking, but only supports [AFrame](https://aframe.io) or vanilla [Three.js](https://threejs.org). This library aims to bridge the two worlds, while waiting for the new [WebXR Standard](https://caniuse.com/webxr) to include image and face tracking.
@@ -89,5 +105,5 @@ A Mesh Object representing a tracked face (see the original [MindAR example](htt
 
 ## 📮 TODO
 
-- [ ] Add Showcase Video
+- [x] Add Showcase Video
 - [ ] Fix CI Build

@@ -1,6 +1,6 @@
 {
   "name": "react-three-mind",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "MindAR components for @react-three/fiber",
   "main": "dist/index.js",
   "author": "Tommaso Turchi",
@@ -38,7 +38,7 @@
     "@react-three/drei": "^9.36.0",
     "@react-three/fiber": "^8.8.10",
     "jotai": "^1.8.6",
-    "mind-ar": "^1.1.5",
+    "mind-ar": "1.1.5",
     "react-webcam": "^7.0.1",
     "three": "^0.145.0"
   }

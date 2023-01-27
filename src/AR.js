@@ -1,4 +1,4 @@
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import {
   faces as FaceMeshFaces,
   uvs as FaceMeshUVs,
@@ -14,17 +14,17 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { atom, useAtom } from "jotai";
+import { atom, useAtomValue, useSetAtom } from "jotai";
 
 import { Controller as FaceTargetController } from "mind-ar/src/face-target/controller";
 import { Html } from "@react-three/drei";
 import { Controller as ImageTargetController } from "mind-ar/src/image-target/controller";
 import Webcam from "react-webcam";
-import { useUpdateAtom } from "jotai/utils";
 import { useWindowSize } from "./hooks";
 
-const anchorsAtom = atom([]);
-const faceMeshesAtom = atom([]);
+const modeAtom = atom();
+const anchorsAtom = atom({});
+const faceMeshAtom = atom();
 
 const ARProvider = forwardRef(
   (
@@ -47,13 +47,16 @@ const ARProvider = forwardRef(
     const [ready, setReady] = useState(false);
     const controllerRef = useRef(null);
     const { camera } = useThree();
-    const [anchors] = useAtom(anchorsAtom);
-    const [faceMeshes] = useAtom(faceMeshesAtom);
+    const setMode = useSetAtom(modeAtom);
+    const setAnchors = useSetAtom(anchorsAtom);
+    const setFaceMesh = useSetAtom(faceMeshAtom);
 
     const { width, height } = useWindowSize();
 
     useEffect(() => {
       if (controllerRef.current) {
+        setMode(Boolean(imageTargets));
+
         if (imageTargets) {
           const ARprojectionMatrix =
             controllerRef.current.getProjectionMatrix();
@@ -64,7 +67,14 @@ const ARProvider = forwardRef(
           camera.updateProjectionMatrix();
         }
       }
-    }, [width, height, camera, imageTargets]);
+
+      return () => {
+        if (controllerRef.current) {
+          controllerRef.current.stopProcessVideo();
+          controllerRef.current = null;
+        }
+      };
+    }, [width, height, camera, imageTargets, setMode]);
 
     const handleStream = useCallback(() => {
       if (webcamRef.current) {
@@ -110,36 +120,18 @@ const ARProvider = forwardRef(
           camera.far = ARprojectionMatrix[14] / (ARprojectionMatrix[10] + 1.0);
           camera.updateProjectionMatrix();
 
-          controller.onUpdate = (data) => {
-            if (data.type === "updateMatrix") {
-              const { targetIndex, worldMatrix } = data;
-
-              anchors.forEach(
-                ({ anchor, target, onAnchorFound, onAnchorLost }) => {
-                  if (target === targetIndex) {
-                    if (
-                      !anchor.visible &&
-                      worldMatrix !== null &&
-                      onAnchorFound
-                    )
-                      onAnchorFound();
-                    else if (
-                      anchor.visible &&
-                      worldMatrix === null &&
-                      onAnchorLost
-                    )
-                      onAnchorLost();
-
-                    anchor.visible = worldMatrix !== null;
-
-                    if (worldMatrix !== null) {
-                      anchor.matrix = new Matrix4()
+          controller.onUpdate = ({ type, targetIndex, worldMatrix }) => {
+            if (type === "updateMatrix") {
+              setAnchors((anchors) => ({
+                ...anchors,
+                [targetIndex]:
+                  worldMatrix !== null
+                    ? new Matrix4()
                         .fromArray([...worldMatrix])
-                        .multiply(postMatrices[targetIndex]);
-                    }
-                  }
-                }
-              );
+                        .multiply(postMatrices[targetIndex])
+                        .toArray()
+                    : null,
+              }));
             }
           };
         } else {
@@ -148,40 +140,13 @@ const ARProvider = forwardRef(
             filterBeta,
           });
 
-          controller.onUpdate = ({ hasFace, estimateResult }) => {
-            faceMeshes.forEach(({ anchor, onFaceFound, onFaceLost }) => {
-              if (!anchor.visible && hasFace && onFaceFound) onFaceFound();
-              else if (anchor.visible && !hasFace && onFaceLost) onFaceLost();
-
-              anchor.visible = hasFace;
-            });
-
-            anchors.forEach(
-              ({ anchor, target, onAnchorFound, onAnchorLost }) => {
-                if (!anchor.visible && hasFace && onAnchorFound)
-                  onAnchorFound();
-                else if (anchor.visible && !hasFace && onAnchorLost)
-                  onAnchorLost();
-
-                anchor.visible = hasFace;
-                if (hasFace)
-                  anchor.matrix.set(...controller.getLandmarkMatrix(target));
-              }
+          controller.onUpdate = ({
+            hasFace,
+            estimateResult: { faceMatrix, metricLandmarks, faceScale },
+          }) => {
+            setFaceMesh(
+              hasFace ? { faceMatrix, metricLandmarks, faceScale } : null
             );
-
-            if (hasFace)
-              faceMeshes.forEach(({ anchor }) => {
-                anchor.matrix.set(...estimateResult.faceMatrix);
-
-                for (let i = 0; i < FaceMeshUVs.length; i++)
-                  anchor.geometry.attributes.position.set(
-                    estimateResult.metricLandmarks[i],
-                    i * 3
-                  );
-
-                anchor.geometry.attributes.position.needsUpdate = true;
-                anchor.geometry.computeVertexNormals();
-              });
           };
 
           await controller.setup(webcamRef.current.video);
@@ -205,14 +170,15 @@ const ARProvider = forwardRef(
     }, [
       ready,
       imageTargets,
+      onReady,
       maxTrack,
       filterMinCF,
       filterBeta,
       missTolerance,
       warmupTolerance,
       camera,
-      anchors,
-      faceMeshes,
+      setAnchors,
+      setFaceMesh,
     ]);
 
     const stopTracking = useCallback(() => {
@@ -220,13 +186,6 @@ const ARProvider = forwardRef(
         controllerRef.current.stopProcessVideo();
       }
     }, [controllerRef]);
-
-    useFrame(() => {
-      if (controllerRef.current && !controllerRef.current.processingVideo) {
-        faceMeshes.forEach(({ anchor }) => (anchor.visible = false));
-        anchors.forEach(({ anchor }) => (anchor.visible = false));
-      }
-    });
 
     useImperativeHandle(
       ref,
@@ -357,15 +316,59 @@ const ARAnchor = ({
   ...rest
 }) => {
   const ref = useRef();
-  const setAnchors = useUpdateAtom(anchorsAtom);
+  const anchor = useAtomValue(anchorsAtom);
+  const mode = useAtomValue(modeAtom);
+  const faceMesh = useAtomValue(faceMeshAtom);
 
   useEffect(() => {
-    if (ref.current)
-      setAnchors((anchors) => [
-        ...anchors,
-        { target, anchor: ref.current, onAnchorFound, onAnchorLost },
-      ]);
-  }, [ref, setAnchors, target, onAnchorFound, onAnchorLost]);
+    if (ref.current) {
+      if (mode) {
+        if (anchor[target]) {
+          if (ref.current.visible !== true && onAnchorFound) onAnchorFound();
+          ref.current.visible = true;
+          ref.current.matrix = new Matrix4().fromArray(anchor[target]);
+        } else {
+          if (ref.current.visible !== false && onAnchorLost) onAnchorLost();
+          ref.current.visible = false;
+        }
+      } else {
+        if (faceMesh) {
+          if (ref.current.visible !== true && onAnchorFound) onAnchorFound();
+          ref.current.visible = true;
+          const fm = faceMesh.faceMatrix;
+          const s = faceMesh.faceScale;
+          const t = [
+            faceMesh.metricLandmarks[target][0],
+            faceMesh.metricLandmarks[target][1],
+            faceMesh.metricLandmarks[target][2],
+          ];
+          ref.current.matrix.set(
+            ...[
+              fm[0] * s,
+              fm[1] * s,
+              fm[2] * s,
+              fm[0] * t[0] + fm[1] * t[1] + fm[2] * t[2] + fm[3],
+              fm[4] * s,
+              fm[5] * s,
+              fm[6] * s,
+              fm[4] * t[0] + fm[5] * t[1] + fm[6] * t[2] + fm[7],
+              fm[8] * s,
+              fm[9] * s,
+              fm[10] * s,
+              fm[8] * t[0] + fm[9] * t[1] + fm[10] * t[2] + fm[11],
+              fm[12] * s,
+              fm[13] * s,
+              fm[14] * s,
+              fm[12] * t[0] + fm[13] * t[1] + fm[14] * t[2] + fm[15],
+            ]
+          );
+        } else {
+          if (ref.current.visible !== false && onAnchorLost) onAnchorLost();
+          ref.current.visible = false;
+        }
+      }
+    }
+  }, [anchor, target, onAnchorFound, onAnchorLost, mode, faceMesh]);
 
   return (
     <group ref={ref} visible={false} matrixAutoUpdate={false} {...rest}>
@@ -376,7 +379,7 @@ const ARAnchor = ({
 
 const ARFaceMesh = ({ children, onFaceFound, onFaceLost, ...rest }) => {
   const ref = useRef();
-  const setFaceMeshes = useUpdateAtom(faceMeshesAtom);
+  const faceMesh = useAtomValue(faceMeshAtom);
 
   const [positions, uvs, indexes] = useMemo(() => {
     const positions = new Float32Array(FaceMeshUVs.length * 3);
@@ -391,12 +394,25 @@ const ARFaceMesh = ({ children, onFaceFound, onFaceLost, ...rest }) => {
   }, []);
 
   useEffect(() => {
-    if (ref.current)
-      setFaceMeshes((faceMeshes) => [
-        ...faceMeshes,
-        { anchor: ref.current, onFaceFound, onFaceLost },
-      ]);
-  }, [ref, setFaceMeshes, onFaceFound, onFaceLost]);
+    if (ref.current) {
+      if (faceMesh) {
+        if (ref.current.visible !== true && onFaceFound) onFaceFound();
+        ref.current.visible = true;
+        ref.current.matrix.set(...faceMesh.faceMatrix);
+        for (let i = 0; i < FaceMeshUVs.length; i++)
+          ref.current.geometry.attributes.position.set(
+            faceMesh.metricLandmarks[i],
+            i * 3
+          );
+
+        ref.current.geometry.attributes.position.needsUpdate = true;
+        ref.current.geometry.computeVertexNormals();
+      } else {
+        if (ref.current.visible !== false && onFaceLost) onFaceLost();
+        ref.current.visible = false;
+      }
+    }
+  }, [onFaceFound, onFaceLost, faceMesh]);
 
   return (
     <mesh ref={ref} visible={false} matrixAutoUpdate={false} {...rest}>

@@ -110,4 +110,5 @@ A Mesh Object representing a tracked face (see the original [MindAR example](htt
 ## 📮 TODO
 
 - [x] Add Showcase Video
-- [ ] Fix CI Build
+- [x] Fix Performance Issues
+- [ ] Fix CI Build (Update to mind-ar 1.2)

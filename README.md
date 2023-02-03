@@ -107,6 +107,8 @@ A Mesh Object representing a tracked face (see the original [MindAR example](htt
 
 [MindAR](https://github.com/hiukim/mind-ar-js) is developed by the amazing [HiuKim Yuen](https://github.com/hiukim/). The showcase videos in this README come from its documentation.
 
+Proudly supported by the amazing people @ [ARuVR](https://aruvr.com).
+
 ## 📮 TODO
 
 - [x] Add Showcase Video

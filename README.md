@@ -62,6 +62,7 @@ const switchCamera = ref.current.switchCamera(); // Switches between environment
 <ARView
   ref={ref}
   autoplay // Automatically starts tracking once the camera stream is ready
+  flipUserCamera={false} // Prevents automatic flipping of the user camera
   imageTargets={`url`} // URL of the generated image targets features
   maxTrack={1} // Maximum number of targets tracked simultaneously
   filterMinCF={0.1} // Cutoff Frequency, decrease to reduce jittering

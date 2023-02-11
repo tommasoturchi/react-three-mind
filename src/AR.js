@@ -25,6 +25,7 @@ import { useWindowSize } from "./hooks";
 const modeAtom = atom();
 const anchorsAtom = atom({});
 const faceMeshAtom = atom();
+const flipUserCameraAtom = atom(true);
 
 const ARProvider = forwardRef(
   (
@@ -37,6 +38,7 @@ const ARProvider = forwardRef(
       filterBeta = null,
       warmupTolerance = null,
       missTolerance = null,
+      flipUserCamera = true,
       onReady = null,
       onError = null,
     },
@@ -50,8 +52,14 @@ const ARProvider = forwardRef(
     const setMode = useSetAtom(modeAtom);
     const setAnchors = useSetAtom(anchorsAtom);
     const setFaceMesh = useSetAtom(faceMeshAtom);
+    const setFlipUserCamera = useSetAtom(flipUserCameraAtom);
 
     const { width, height } = useWindowSize();
+
+    useEffect(
+      () => setFlipUserCamera(flipUserCamera),
+      [flipUserCamera, setFlipUserCamera]
+    );
 
     useEffect(() => {
       if (controllerRef.current) {
@@ -74,7 +82,7 @@ const ARProvider = forwardRef(
           controllerRef.current = null;
         }
       };
-    }, [width, height, camera, imageTargets, setMode]);
+    }, [camera, imageTargets, setMode]);
 
     const handleStream = useCallback(() => {
       if (webcamRef.current) {
@@ -140,14 +148,8 @@ const ARProvider = forwardRef(
             filterBeta,
           });
 
-          controller.onUpdate = ({
-            hasFace,
-            estimateResult: { faceMatrix, metricLandmarks, faceScale },
-          }) => {
-            setFaceMesh(
-              hasFace ? { faceMatrix, metricLandmarks, faceScale } : null
-            );
-          };
+          controller.onUpdate = ({ hasFace, estimateResult }) =>
+            setFaceMesh(hasFace ? estimateResult : null);
 
           await controller.setup(webcamRef.current.video);
 
@@ -210,20 +212,19 @@ const ARProvider = forwardRef(
       }
     }, [autoplay, ready, startTracking]);
 
-    const fixStyle = () => {
-      let offset = 0;
-      if (webcamRef.current?.video?.clientWidth > 0) {
-        offset = (width - webcamRef.current.video.clientWidth) / 2;
-      }
-      offset = parseInt(offset + "");
-
-      return {
+    const feedStyle = useMemo(
+      () => ({
         width: "auto",
         maxWidth: "none",
         height: "inherit",
-        marginLeft: offset + "px",
-      };
-    };
+        marginLeft: `${
+          webcamRef.current?.video?.clientWidth > 0 && ready
+            ? parseInt((width - webcamRef.current.video.clientWidth) / 2)
+            : 0
+        }px`,
+      }),
+      [width, ready, webcamRef]
+    );
 
     return (
       <>
@@ -231,7 +232,13 @@ const ARProvider = forwardRef(
           fullscreen
           zIndexRange={[-1, -1]}
           calculatePosition={() => [0, 0]}
-          style={{ top: 0, left: 0 }}
+          style={{
+            top: 0,
+            left: 0,
+            ...(isWebcamFacingUser && flipUserCamera
+              ? { WebkitTransform: "scaleX(-1)", transform: "scaleX(-1)" }
+              : {}),
+          }}
         >
           <Webcam
             ref={webcamRef}
@@ -244,7 +251,7 @@ const ARProvider = forwardRef(
             videoConstraints={{
               facingMode: isWebcamFacingUser ? "user" : "environment",
             }}
-            style={fixStyle()}
+            style={feedStyle}
           />
         </Html>
         {children}
@@ -264,6 +271,7 @@ const ARView = forwardRef(
       filterBeta,
       warmupTolerance,
       missTolerance,
+      flipUserCamera = true,
       onReady,
       onError,
       ...rest
@@ -295,6 +303,7 @@ const ARView = forwardRef(
               filterBeta,
               warmupTolerance,
               missTolerance,
+              flipUserCamera,
               onReady,
               onError,
             }}
@@ -380,6 +389,7 @@ const ARAnchor = ({
 const ARFaceMesh = ({ children, onFaceFound, onFaceLost, ...rest }) => {
   const ref = useRef();
   const faceMesh = useAtomValue(faceMeshAtom);
+  const flipUserCamera = useAtomValue(flipUserCameraAtom);
 
   const [positions, uvs, indexes] = useMemo(() => {
     const positions = new Float32Array(FaceMeshUVs.length * 3);
@@ -415,29 +425,31 @@ const ARFaceMesh = ({ children, onFaceFound, onFaceLost, ...rest }) => {
   }, [onFaceFound, onFaceLost, faceMesh]);
 
   return (
-    <mesh ref={ref} visible={false} matrixAutoUpdate={false} {...rest}>
-      <bufferGeometry attach="geometry">
-        <bufferAttribute
-          attach="index"
-          array={indexes}
-          count={indexes.length}
-          itemSize={1}
-        />
-        <bufferAttribute
-          attach="attributes-position"
-          count={positions.length / 3}
-          itemSize={3}
-          array={positions}
-        />
-        <bufferAttribute
-          attach="attributes-uv"
-          count={uvs.length / 2}
-          itemSize={2}
-          array={uvs}
-        />
-      </bufferGeometry>
-      {children}
-    </mesh>
+    <group scale={[flipUserCamera ? -1 : 1, 1, 1]}>
+      <mesh ref={ref} visible={false} matrixAutoUpdate={false} {...rest}>
+        <bufferGeometry attach="geometry">
+          <bufferAttribute
+            attach="index"
+            array={indexes}
+            count={indexes.length}
+            itemSize={1}
+          />
+          <bufferAttribute
+            attach="attributes-position"
+            count={positions.length / 3}
+            itemSize={3}
+            array={positions}
+          />
+          <bufferAttribute
+            attach="attributes-uv"
+            count={uvs.length / 2}
+            itemSize={2}
+            array={uvs}
+          />
+        </bufferGeometry>
+        {children}
+      </mesh>
+    </group>
   );
 };
 

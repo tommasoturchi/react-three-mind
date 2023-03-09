@@ -1,6 +1,6 @@
 {
   "name": "react-three-mind",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "MindAR components for @react-three/fiber",
   "main": "dist/index.js",
   "author": "Tommaso Turchi",

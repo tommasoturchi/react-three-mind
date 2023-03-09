@@ -22,7 +22,7 @@ import { Controller as ImageTargetController } from "mind-ar/src/image-target/co
 import Webcam from "react-webcam";
 import { useWindowSize } from "./hooks";
 
-const modeAtom = atom();
+const modeAtom = atom(false);
 const anchorsAtom = atom({});
 const faceMeshAtom = atom();
 const flipUserCameraAtom = atom(true);
@@ -62,27 +62,8 @@ const ARProvider = forwardRef(
     );
 
     useEffect(() => {
-      if (controllerRef.current) {
-        setMode(Boolean(imageTargets));
-
-        if (imageTargets) {
-          const ARprojectionMatrix =
-            controllerRef.current.getProjectionMatrix();
-          camera.fov =
-            (2 * Math.atan(1 / ARprojectionMatrix[5]) * 180) / Math.PI;
-          camera.near = ARprojectionMatrix[14] / (ARprojectionMatrix[10] - 1.0);
-          camera.far = ARprojectionMatrix[14] / (ARprojectionMatrix[10] + 1.0);
-          camera.updateProjectionMatrix();
-        }
-      }
-
-      return () => {
-        if (controllerRef.current) {
-          controllerRef.current.stopProcessVideo();
-          controllerRef.current = null;
-        }
-      };
-    }, [camera, imageTargets, setMode]);
+      setMode(Boolean(imageTargets));
+    }, [imageTargets, setMode]);
 
     const handleStream = useCallback(() => {
       if (webcamRef.current) {
@@ -235,9 +216,6 @@ const ARProvider = forwardRef(
           style={{
             top: 0,
             left: 0,
-            ...(isWebcamFacingUser && flipUserCamera
-              ? { WebkitTransform: "scaleX(-1)", transform: "scaleX(-1)" }
-              : {}),
           }}
         >
           <Webcam
@@ -252,6 +230,7 @@ const ARProvider = forwardRef(
               facingMode: isWebcamFacingUser ? "user" : "environment",
             }}
             style={feedStyle}
+            mirrored={isWebcamFacingUser && flipUserCamera}
           />
         </Html>
         {children}
@@ -328,6 +307,7 @@ const ARAnchor = ({
   const anchor = useAtomValue(anchorsAtom);
   const mode = useAtomValue(modeAtom);
   const faceMesh = useAtomValue(faceMeshAtom);
+  const flipUserCamera = useAtomValue(flipUserCameraAtom);
 
   useEffect(() => {
     if (ref.current) {
@@ -380,8 +360,10 @@ const ARAnchor = ({
   }, [anchor, target, onAnchorFound, onAnchorLost, mode, faceMesh]);
 
   return (
-    <group ref={ref} visible={false} matrixAutoUpdate={false} {...rest}>
-      {children}
+    <group scale={[flipUserCamera ? -1 : 1, 1, 1]}>
+      <group ref={ref} visible={false} matrixAutoUpdate={false} {...rest}>
+        {children}
+      </group>
     </group>
   );
 };

@@ -37,18 +37,17 @@
     "@babel/preset-react": "^7.22.5",
     "@vitejs/plugin-react": "^4.0.2",
     "@rollup/plugin-terser": "^0.4.3",
-    "babel-loader": "^9.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "terser": "^5.18.2",
     "vite": "^4.4.1"
   },
   "dependencies": {
-    "@react-three/drei": "^9.78.1",
-    "@react-three/fiber": "^8.13.4",
+    "@react-three/drei": "^9.36.0",
+    "@react-three/fiber": "^8.8.10",
     "jotai": "^2.2.2",
     "mind-ar": "1.2.3",
     "react-webcam": "^7.1.1",
-    "three": "^0.154.0"
+    "three": "^0.145.0"
   }
 }

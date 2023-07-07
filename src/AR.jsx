@@ -67,16 +67,22 @@ const ARProvider = forwardRef(
 
     const handleStream = useCallback(() => {
       if (webcamRef.current) {
-        webcamRef.current.video.addEventListener("loadedmetadata", () =>
+        webcamRef.current.video.addEventListener("loadedmetadata", () => {
+          console.log('loadedmetadata');
           setReady(true)
+  
+        }
         );
       }
     }, [webcamRef]);
 
     const startTracking = useCallback(async () => {
+      console.log('startTracking');
       if (ready) {
+        console.log(`ready`);
         let controller;
         if (imageTargets) {
+          console.log(imageTargets);
           controller = new ImageTargetController({
             inputWidth: webcamRef.current.video.videoWidth,
             inputHeight: webcamRef.current.video.videoHeight,

@@ -86,6 +86,7 @@ const ARProvider = forwardRef(
           controller = new ImageTargetController({
             inputWidth: webcamRef.current.video.videoWidth,
             inputHeight: webcamRef.current.video.videoHeight,
+            debugMode: true,
             maxTrack,
             filterMinCF,
             filterBeta,
@@ -138,7 +139,8 @@ const ARProvider = forwardRef(
           controller.onUpdate = ({ hasFace, estimateResult }) =>
             setFaceMesh(hasFace ? estimateResult : null);
 
-          await controller.setup(webcamRef.current.video);
+          controller.onInputResized(webcamRef.current.video);
+          await controller.setup(flipUserCamera);
 
           const { fov, aspect, near, far } = controller.getCameraParams();
           camera.fov = fov;

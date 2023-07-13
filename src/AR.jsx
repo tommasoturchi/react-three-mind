@@ -94,6 +94,13 @@ const ARProvider = forwardRef(
             warmupTolerance,
           });
 
+          const ARprojectionMatrix = controller.getProjectionMatrix();
+          camera.fov =
+            (2 * Math.atan(1 / ARprojectionMatrix[5]) * 180) / Math.PI;
+          camera.near = ARprojectionMatrix[14] / (ARprojectionMatrix[10] - 1.0);
+          camera.far = ARprojectionMatrix[14] / (ARprojectionMatrix[10] + 1.0);
+          camera.updateProjectionMatrix();
+
           const { dimensions: imageTargetDimensions } =
             await controller.addImageTargets(imageTargets);
 
@@ -108,13 +115,6 @@ const ARProvider = forwardRef(
                 new Vector3(markerWidth, markerWidth, markerWidth)
               )
           );
-
-          const ARprojectionMatrix = controller.getProjectionMatrix();
-          camera.fov =
-            (2 * Math.atan(1 / ARprojectionMatrix[5]) * 180) / Math.PI;
-          camera.near = ARprojectionMatrix[14] / (ARprojectionMatrix[10] - 1.0);
-          camera.far = ARprojectionMatrix[14] / (ARprojectionMatrix[10] + 1.0);
-          camera.updateProjectionMatrix();
 
           controller.onUpdate = ({ type, targetIndex, worldMatrix }) => {
             if (type === "updateMatrix") {

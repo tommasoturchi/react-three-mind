@@ -7,6 +7,7 @@ function App() {
       filterBeta={10000}
       missTolerance={0}
       warmupTolerance={0}
+      flipUserCamera={false}
     >
       <ambientLight />
       <pointLight position={[10, 10, 10]} />

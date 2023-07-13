@@ -12,11 +12,12 @@ function Plane(props) {
 function App() {
   return (
     <ARView
-      imageTargets="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/examples/image-tracking/assets/card-example/card.mind"
-      filterMinCF={1}
-      filterBeta={10000}
-      missTolerance={0}
-      warmupTolerance={0}
+      imageTargets="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.3/examples/image-tracking/assets/card-example/card.mind"
+      filterMinCF={0.001}
+      filterBeta={1000}
+      missTolerance={5}
+      warmupTolerance={5}
+      flipUserCamera={false}
     >
       <ambientLight />
       <pointLight position={[10, 10, 10]} />

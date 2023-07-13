@@ -67,25 +67,39 @@ const ARProvider = forwardRef(
 
     const handleStream = useCallback(() => {
       if (webcamRef.current) {
-        webcamRef.current.video.addEventListener("loadedmetadata", () =>
+        webcamRef.current.video.addEventListener("loadedmetadata", () => {
+          console.log('loadedmetadata');
           setReady(true)
+  
+        }
         );
       }
     }, [webcamRef]);
 
     const startTracking = useCallback(async () => {
+      console.log('startTracking');
       if (ready) {
+        console.log(`ready`);
         let controller;
         if (imageTargets) {
+          console.log(imageTargets);
           controller = new ImageTargetController({
             inputWidth: webcamRef.current.video.videoWidth,
             inputHeight: webcamRef.current.video.videoHeight,
+            debugMode: true,
             maxTrack,
             filterMinCF,
             filterBeta,
             missTolerance,
             warmupTolerance,
           });
+
+          const ARprojectionMatrix = controller.getProjectionMatrix();
+          camera.fov =
+            (2 * Math.atan(1 / ARprojectionMatrix[5]) * 180) / Math.PI;
+          camera.near = ARprojectionMatrix[14] / (ARprojectionMatrix[10] - 1.0);
+          camera.far = ARprojectionMatrix[14] / (ARprojectionMatrix[10] + 1.0);
+          camera.updateProjectionMatrix();
 
           const { dimensions: imageTargetDimensions } =
             await controller.addImageTargets(imageTargets);
@@ -101,13 +115,6 @@ const ARProvider = forwardRef(
                 new Vector3(markerWidth, markerWidth, markerWidth)
               )
           );
-
-          const ARprojectionMatrix = controller.getProjectionMatrix();
-          camera.fov =
-            (2 * Math.atan(1 / ARprojectionMatrix[5]) * 180) / Math.PI;
-          camera.near = ARprojectionMatrix[14] / (ARprojectionMatrix[10] - 1.0);
-          camera.far = ARprojectionMatrix[14] / (ARprojectionMatrix[10] + 1.0);
-          camera.updateProjectionMatrix();
 
           controller.onUpdate = ({ type, targetIndex, worldMatrix }) => {
             if (type === "updateMatrix") {
@@ -132,7 +139,8 @@ const ARProvider = forwardRef(
           controller.onUpdate = ({ hasFace, estimateResult }) =>
             setFaceMesh(hasFace ? estimateResult : null);
 
-          await controller.setup(webcamRef.current.video);
+          controller.onInputResized(webcamRef.current.video);
+          await controller.setup(flipUserCamera);
 
           const { fov, aspect, near, far } = controller.getCameraParams();
           camera.fov = fov;

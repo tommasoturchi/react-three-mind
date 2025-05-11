@@ -1,6 +1,6 @@
 {
   "name": "react-three-mind",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "MindAR components for @react-three/fiber",
   "main": "dist/index.umd.cjs",
   "module": "dist/index.js",

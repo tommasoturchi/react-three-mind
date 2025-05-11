@@ -4,7 +4,9 @@
   "description": "MindAR components for @react-three/fiber",
   "main": "dist/index.umd.cjs",
   "module": "dist/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "author": "Tommaso Turchi",
   "license": "MIT",
   "type": "module",
@@ -35,8 +37,8 @@
     "@babel/core": "^7.22.8",
     "@babel/preset-env": "^7.22.7",
     "@babel/preset-react": "^7.22.5",
-    "@vitejs/plugin-react": "^4.0.2",
     "@rollup/plugin-terser": "^0.4.3",
+    "@vitejs/plugin-react": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "terser": "^5.18.2",
@@ -47,6 +49,7 @@
     "@react-three/fiber": "^8.8.10",
     "jotai": "^2.2.2",
     "mind-ar": "1.2.3",
+    "nopt": "^8.1.0",
     "react-webcam": "^7.1.1",
     "three": "^0.145.0"
   }

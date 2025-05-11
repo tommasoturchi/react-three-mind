@@ -114,4 +114,4 @@ Proudly supported by the amazing people @ [ARuVR](https://aruvr.com).
 
 - [x] Add Showcase Video
 - [x] Fix Performance Issues
-- [ ] Fix CI Build (Update to mind-ar 1.2)
+- [x] Fix CI Build (Thanks [@timothydang](https://github.com/timothydang))

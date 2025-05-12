@@ -1,4 +1,3 @@
-// src/ARLightEstimation.jsx
 import { useEffect, useRef } from "react";
 import { useThree } from "@react-three/fiber";
 import { AmbientLight, DirectionalLight, HemisphereLight } from "three";

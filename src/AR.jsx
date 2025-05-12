@@ -15,6 +15,7 @@ import React, {
   useState,
 } from "react";
 import { atom, useAtomValue, useSetAtom } from "jotai";
+import { ARLightEstimation } from "./ARLightEstimation";
 
 import { Controller as FaceTargetController } from "mind-ar/src/face-target/controller";
 import { Html } from "@react-three/drei";
@@ -68,16 +69,14 @@ const ARProvider = forwardRef(
     const handleStream = useCallback(() => {
       if (webcamRef.current) {
         webcamRef.current.video.addEventListener("loadedmetadata", () => {
-          console.log('loadedmetadata');
-          setReady(true)
-  
-        }
-        );
+          console.log("loadedmetadata");
+          setReady(true);
+        });
       }
     }, [webcamRef]);
 
     const startTracking = useCallback(async () => {
-      console.log('startTracking');
+      console.log("startTracking");
       if (ready) {
         console.log(`ready`);
         let controller;
@@ -261,6 +260,9 @@ const ARView = forwardRef(
       flipUserCamera = true,
       onReady,
       onError,
+      lightEstimation = false,
+      lightUpdateFrequency = 100,
+      onLightUpdate,
       ...rest
     },
     ref
@@ -296,6 +298,12 @@ const ARView = forwardRef(
             }}
             ref={ARRef}
           >
+            {lightEstimation && (
+              <ARLightEstimation
+                updateFrequency={lightUpdateFrequency}
+                onLightUpdate={onLightUpdate}
+              />
+            )}
             {children}
           </ARProvider>
         </Suspense>

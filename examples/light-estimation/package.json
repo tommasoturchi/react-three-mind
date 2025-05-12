@@ -1,0 +1,28 @@
+{
+  "name": "face-tracking",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.36.0",
+    "@react-three/fiber": "^8.8.10",
+    "mind-ar": "^1.2.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-three-mind": "file:../..",
+    "react-webcam": "^7.2.0",
+    "three": "^0.145.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "@vitejs/plugin-react": "^4.0.2",
+    "vite": "^4.4.0",
+    "vite-plugin-mkcert": "^1.17.8"
+  }
+}

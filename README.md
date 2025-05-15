@@ -6,6 +6,8 @@ React Components adding Augmented Reality capabilities to [@react-three/fiber](h
 npm i react-three-mind
 ```
 
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/tommasoturchi)
+
 <table>
   <tbody>
     <tr>
